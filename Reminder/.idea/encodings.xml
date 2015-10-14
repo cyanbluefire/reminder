@@ -3,7 +3,6 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/app/build.gradle" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/libs/baidumapapi_v3_5_0.jar" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/app/libs/locSDK_5.2.jar" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/bluefire/reminder/activity/MainActivity.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/build.gradle" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />
