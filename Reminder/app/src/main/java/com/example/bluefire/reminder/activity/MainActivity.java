@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                mLocationClient = MyApplication.mLocationClient;
-//                mLocationClient.stop();
+                mLocationClient.stop();
                 mLocationClient.removeNotifyEvent(LocationActivity.mNotifyLister);
                 Toast.makeText(MainActivity.this,"定位提醒已经结束",Toast.LENGTH_LONG).show();
             }
@@ -62,6 +62,12 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mLocationClient.removeNotifyEvent(LocationActivity.mNotifyLister);
     }
 
     @Override

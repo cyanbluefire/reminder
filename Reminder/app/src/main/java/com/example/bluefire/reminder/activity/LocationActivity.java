@@ -76,7 +76,7 @@ public class LocationActivity extends Activity{
     public BDLocationListener myListener;
 //    public BDLocationListener myListener = new MyLocationListener();
     private LocationMode tempMode = LocationMode.Hight_Accuracy;
-    private String tempcoor="gps";
+    private String tempcoor="gcj02";
     /**
      * 位置提醒
      * @param savedInstanceState
@@ -97,7 +97,6 @@ public class LocationActivity extends Activity{
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         ActivityCollector.addActivity(this);
-        Log.v(TAG, "start oncreate selectLocation");
         SDKInitializer.initialize(getApplicationContext());					//初始化sdk引用的context信息，必需在setContentView之前
         setContentView(R.layout.activity_location);
 
@@ -190,7 +189,7 @@ public class LocationActivity extends Activity{
 //            mLocationClient.start();
 //            Log.i(TAG, "Location start");
             //开始位置提醒
-            startNotifyLocation();
+//            startNotifyLocation();
 
             finish();
         }
@@ -271,9 +270,10 @@ public class LocationActivity extends Activity{
             }
             latitude= result.getLocation().latitude;
             longitude = result.getLocation().longitude;
-            String strInfo = String.format("提醒位置的纬度：%f 经度：%f",
-                    result.getLocation().latitude, result.getLocation().longitude);
-            Log.i(TAG,strInfo);
+//            String strInfo = String.format("提醒位置的纬度：%f 经度：%f",latitude,longitude);
+//            Log.i(TAG,strInfo);
+            //开始位置提醒
+            startNotifyLocation();
 //            Toast.makeText(LocationActivity.this, strInfo, Toast.LENGTH_LONG).show();
 
         }
@@ -289,10 +289,15 @@ public class LocationActivity extends Activity{
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
     }
+
+    /**
+     * 位置到达提醒处理
+     */
     public class NotifyLister extends BDNotifyListener {
         public void onNotify(BDLocation mlocation, float distance){
+            Log.i(TAG,"onNotify");
             mVibrator.vibrate(1000);//振动提醒已到设定位置附近
-            Toast.makeText(LocationActivity.this, "震动提醒", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LocationActivity.this, "你的目的地到啦~", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -306,7 +311,8 @@ public class LocationActivity extends Activity{
 //        latitude = 42.03249652949337;
 //        longitude = 113.3129895882556;
         mNotifyLister = new NotifyLister();
-        mNotifyLister.SetNotifyLocation(latitude,longitude, 200,tempcoor);//4个参数代表要位置提醒的点的坐标，具体含义依次为：纬度，经度，距离范围，坐标系类型(gcj02,gps,bd09,bd09ll)
+        Log.i(TAG,"latitude"+latitude+" longitude"+longitude);
+        mNotifyLister.SetNotifyLocation(latitude,longitude, 1000,tempcoor);//4个参数代表要位置提醒的点的坐标，具体含义依次为：纬度，经度，距离范围，坐标系类型(gcj02,gps,bd09,bd09ll)
         mLocationClient.registerNotify(mNotifyLister);
         mLocationClient.start();
         Log.i(TAG, "Location notify start");
