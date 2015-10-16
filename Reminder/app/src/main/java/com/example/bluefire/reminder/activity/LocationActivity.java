@@ -43,6 +43,7 @@ import com.baidu.mapapi.search.sug.SuggestionSearch;
 import com.baidu.mapapi.search.sug.SuggestionSearchOption;
 import com.example.bluefire.reminder.R;
 import com.example.bluefire.reminder.app.MyApplication;
+import com.example.bluefire.reminder.app.MyService;
 import com.example.bluefire.reminder.util.ActivityCollector;
 
 import com.baidu.location.BDLocationListener;
@@ -101,7 +102,7 @@ public class LocationActivity extends Activity{
         setContentView(R.layout.activity_location);
 
         initSuggestion();
-        initLocation();
+//        initLocation();
         initLocationNotify();
         initGeoCoder();
     }
@@ -115,6 +116,7 @@ public class LocationActivity extends Activity{
      * 初始化位置提醒
      */
     private void initLocationNotify() {
+        mLocationClient = MyApplication.mLocationClient;
 //        listener = new NotiftLocationListener();
         mVibrator = (Vibrator)getApplicationContext().getSystemService(Service.VIBRATOR_SERVICE);
 
@@ -190,6 +192,10 @@ public class LocationActivity extends Activity{
 //            Log.i(TAG, "Location start");
             //开始位置提醒
 //            startNotifyLocation();
+
+            //开启servcie
+            Intent mServiceIntent = new Intent(LocationActivity.this, MyService.class);
+            startService(mServiceIntent);
 
             finish();
         }
@@ -273,7 +279,7 @@ public class LocationActivity extends Activity{
 //            String strInfo = String.format("提醒位置的纬度：%f 经度：%f",latitude,longitude);
 //            Log.i(TAG,strInfo);
             //开始位置提醒
-            startNotifyLocation();
+
 //            Toast.makeText(LocationActivity.this, strInfo, Toast.LENGTH_LONG).show();
 
         }
@@ -290,33 +296,6 @@ public class LocationActivity extends Activity{
         super.onRestoreInstanceState(savedInstanceState);
     }
 
-    /**
-     * 位置到达提醒处理
-     */
-    public class NotifyLister extends BDNotifyListener {
-        public void onNotify(BDLocation mlocation, float distance){
-            Log.i(TAG,"onNotify");
-            mVibrator.vibrate(1000);//振动提醒已到设定位置附近
-            Toast.makeText(LocationActivity.this, "你的目的地到啦~", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void startGeoCoder(String city,String address){
-        mSearch.geocode(new GeoCodeOption()
-                .city(city)
-                .address(address));
-    }
-    private void startNotifyLocation(){
-        Log.i(TAG,"startNotifyLocation()");
-//        latitude = 42.03249652949337;
-//        longitude = 113.3129895882556;
-        mNotifyLister = new NotifyLister();
-        Log.i(TAG,"latitude"+latitude+" longitude"+longitude);
-        mNotifyLister.SetNotifyLocation(latitude,longitude, 1000,tempcoor);//4个参数代表要位置提醒的点的坐标，具体含义依次为：纬度，经度，距离范围，坐标系类型(gcj02,gps,bd09,bd09ll)
-        mLocationClient.registerNotify(mNotifyLister);
-        mLocationClient.start();
-        Log.i(TAG, "Location notify start");
-    }
 
     private void initLocation(){
         Log.i(TAG,"initLocation()");
