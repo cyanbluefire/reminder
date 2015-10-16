@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mLocationClient.removeNotifyEvent(LocationActivity.mNotifyLister);
+//        mLocationClient.removeNotifyEvent(LocationActivity.mNotifyLister);
     }
 
     @Override
