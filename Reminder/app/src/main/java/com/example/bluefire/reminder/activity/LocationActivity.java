@@ -84,8 +84,7 @@ public class LocationActivity extends Activity{
      */
 //    private NotiftLocationListener listener;
     private double longitude,latitude;
-    public static NotifyLister mNotifyLister;
-    private Vibrator mVibrator;
+//    private Vibrator mVibrator;
 
     /**
      * 地理编码
@@ -103,24 +102,13 @@ public class LocationActivity extends Activity{
 
         initSuggestion();
 //        initLocation();
-        initLocationNotify();
+//        initLocationNotify();
         initGeoCoder();
     }
 
     private void initGeoCoder() {
         mSearch = GeoCoder.newInstance();
         mSearch.setOnGetGeoCodeResultListener(geoListener);
-    }
-
-    /**
-     * 初始化位置提醒
-     */
-    private void initLocationNotify() {
-        mLocationClient = MyApplication.mLocationClient;
-//        listener = new NotiftLocationListener();
-        mVibrator = (Vibrator)getApplicationContext().getSystemService(Service.VIBRATOR_SERVICE);
-
-//        mLocationClient.registerLocationListener(listener);
     }
 
     /**
@@ -147,7 +135,6 @@ public class LocationActivity extends Activity{
                     }
                 }
                 adapter_recLocation.notifyDataSetChanged();
-                Log.v(TAG,"notifyDataSetChanged");
             }
         };
         mSuggestionSearch = SuggestionSearch.newInstance();
@@ -186,16 +173,6 @@ public class LocationActivity extends Activity{
             intent.putExtra("type", "位置");
             intent.putExtra("content", location);
             setResult(RESULT_OK, intent);
-
-            //开始定位
-//            mLocationClient.start();
-//            Log.i(TAG, "Location start");
-            //开始位置提醒
-//            startNotifyLocation();
-
-            //开启servcie
-            Intent mServiceIntent = new Intent(LocationActivity.this, MyService.class);
-            startService(mServiceIntent);
 
             finish();
         }
@@ -276,12 +253,15 @@ public class LocationActivity extends Activity{
             }
             latitude= result.getLocation().latitude;
             longitude = result.getLocation().longitude;
-//            String strInfo = String.format("提醒位置的纬度：%f 经度：%f",latitude,longitude);
-//            Log.i(TAG,strInfo);
+            String strInfo = String.format("提醒位置的纬度：%f 经度：%f",latitude,longitude);
+            Log.i(TAG,strInfo);
             //开始位置提醒
-
-//            Toast.makeText(LocationActivity.this, strInfo, Toast.LENGTH_LONG).show();
-
+            //开启servcie
+            Intent mServiceIntent = new Intent(LocationActivity.this, MyService.class);
+            mServiceIntent.putExtra("latitude",latitude);
+            mServiceIntent.putExtra("longitude",longitude);
+//            mServiceIntent.putExtra("test","hahah");
+            startService(mServiceIntent);
         }
 
         @Override
@@ -296,29 +276,38 @@ public class LocationActivity extends Activity{
         super.onRestoreInstanceState(savedInstanceState);
     }
 
-
-    private void initLocation(){
-        Log.i(TAG,"initLocation()");
-        mLocationClient = MyApplication.mLocationClient;
-        LocationClientOption option = new LocationClientOption();
-        option.setLocationMode(tempMode);//可选，默认高精度，设置定位模式，高精度，低功耗，仅设备
-        option.setCoorType(tempcoor);//可选，默认gcj02，设置返回的定位结果坐标系，
-        int span=10000;                 //定位时间间隔
-//        try {
-//            span = Integer.valueOf(frequence.getText().toString());
-//        } catch (Exception e) {
-//            // TODO: handle exception
-//        }
-        option.setScanSpan(span);//可选，默认0，即仅定位一次，设置发起定位请求的间隔需要大于等于1000ms才是有效的
-//        option.setIsNeedAddress(checkGeoLocation.isChecked());//可选，设置是否需要地址信息，默认不需要
-        option.setOpenGps(true);//可选，默认false,设置是否使用gps
-        option.setLocationNotify(true);//可选，默认false，设置是否当gps有效时按照1S1次频率输出GPS结果
-        option.setIgnoreKillProcess(true);//可选，默认true，定位SDK内部是一个SERVICE，并放到了独立进程，设置是否在stop的时候杀死这个进程，默认不杀死
-        option.setEnableSimulateGps(false);//可选，默认false，设置是否需要过滤gps仿真结果，默认需要
-        option.setIsNeedLocationDescribe(true);//可选，默认false，设置是否需要位置语义化结果，可以在BDLocation.getLocationDescribe里得到，结果类似于“在北京天安门附近”
-        option.setIsNeedLocationPoiList(true);//可选，默认false，设置是否需要POI结果，可以在BDLocation.getPoiList里得到
-        mLocationClient.setLocOption(option);
-
-
+    /**
+     * 开始地理编码
+     * @param city
+     * @param address
+     */
+    private void startGeoCoder(String city,String address){
+        mSearch.geocode(new GeoCodeOption()
+                .city(city)
+                .address(address));
     }
+
+//    private void initLocation(){
+//        Log.i(TAG,"initLocation()");
+//        mLocationClient = MyApplication.mLocationClient;
+//        LocationClientOption option = new LocationClientOption();
+//        option.setLocationMode(tempMode);//可选，默认高精度，设置定位模式，高精度，低功耗，仅设备
+//        option.setCoorType(tempcoor);//可选，默认gcj02，设置返回的定位结果坐标系，
+//        int span=10000;                 //定位时间间隔
+////        try {
+////            span = Integer.valueOf(frequence.getText().toString());
+////        } catch (Exception e) {
+////        }
+//        option.setScanSpan(span);//可选，默认0，即仅定位一次，设置发起定位请求的间隔需要大于等于1000ms才是有效的
+////        option.setIsNeedAddress(checkGeoLocation.isChecked());//可选，设置是否需要地址信息，默认不需要
+//        option.setOpenGps(true);//可选，默认false,设置是否使用gps
+//        option.setLocationNotify(true);//可选，默认false，设置是否当gps有效时按照1S1次频率输出GPS结果
+//        option.setIgnoreKillProcess(true);//可选，默认true，定位SDK内部是一个SERVICE，并放到了独立进程，设置是否在stop的时候杀死这个进程，默认不杀死
+//        option.setEnableSimulateGps(false);//可选，默认false，设置是否需要过滤gps仿真结果，默认需要
+//        option.setIsNeedLocationDescribe(true);//可选，默认false，设置是否需要位置语义化结果，可以在BDLocation.getLocationDescribe里得到，结果类似于“在北京天安门附近”
+//        option.setIsNeedLocationPoiList(true);//可选，默认false，设置是否需要POI结果，可以在BDLocation.getPoiList里得到
+//        mLocationClient.setLocOption(option);
+//
+//
+//    }
 }

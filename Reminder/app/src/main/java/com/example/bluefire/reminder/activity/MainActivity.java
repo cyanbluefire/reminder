@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.baidu.location.LocationClient;
 import com.example.bluefire.reminder.R;
 import com.example.bluefire.reminder.app.MyApplication;
+import com.example.bluefire.reminder.app.MyService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,8 +48,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                mLocationClient = MyApplication.mLocationClient;
+                if(mLocationClient == null){
+                    Toast.makeText(MainActivity.this,"定位提醒早已结束",Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                mLocationClient.removeNotifyEvent(MyService.mNotifyLister);
                 mLocationClient.stop();
-                mLocationClient.removeNotifyEvent(LocationActivity.mNotifyLister);
+                stopService(new Intent(MainActivity.this, MyService.class));
                 Toast.makeText(MainActivity.this,"定位提醒已经结束",Toast.LENGTH_LONG).show();
             }
         });
