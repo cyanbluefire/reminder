@@ -58,6 +58,7 @@ public class LocationActivity extends Activity{
     protected static final String TAG = "LocationActivity";
     ArrayList<String> arrayList_autoStrs = new ArrayList<String>();
     String location = "";
+    String thing = "那个神经病该吃药啦";
     private SuggestionSearch mSuggestionSearch = null;
     private SimpleAdapter adapter_recLocation;
     private ArrayAdapter<String> adapter_hisLocation;
@@ -65,7 +66,8 @@ public class LocationActivity extends Activity{
     private List<Map<String, Object>> list_aoutoCom;
     private ListView lv_recLocation;
 
-    private String city ="";
+    private String
+            city ="";
     private EditText et_city;
 
     /**
@@ -260,8 +262,10 @@ public class LocationActivity extends Activity{
             Intent mServiceIntent = new Intent(LocationActivity.this, MyService.class);
             mServiceIntent.putExtra("latitude",latitude);
             mServiceIntent.putExtra("longitude",longitude);
-//            mServiceIntent.putExtra("test","hahah");
+            mServiceIntent.putExtra("location",location);
+            mServiceIntent.putExtra("thing",thing);
             startService(mServiceIntent);
+
         }
 
         @Override
